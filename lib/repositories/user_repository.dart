@@ -12,6 +12,7 @@ class UserRepository {
   Future<List<UserModel>> getUsers(int page, int limit) async {
     try {
       print('Buscando página $page');
+      await Future.delayed(const Duration(seconds: 2));
       final result = await _dio.get('/users', queryParameters: {
         'page': page,
         'limit': limit,

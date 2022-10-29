@@ -6,12 +6,14 @@ class UserListController extends GetxController
     with StateMixin<List<UserModel>>, ScrollMixin {
   final UserRepository _userRepository;
   late final Worker workerPage;
+  final _page = 1.obs;
+  final _limit = 12;
+  final _loading = false.obs;
 
   UserListController({required UserRepository userRepository})
       : _userRepository = userRepository;
 
-  final _page = 1.obs;
-  final _limit = 12;
+  bool get isLoading => _loading.value;
 
   @override
   void onInit() {
@@ -36,12 +38,15 @@ class UserListController extends GetxController
   }
 
   Future<void> _findUser() async {
+    _loading(true);
+
     final result = await _userRepository.getUsers(_page.value, _limit);
 
     final stateResult = state ?? [];
     stateResult.addAll(result);
 
     change(stateResult, status: RxStatus.success());
+    _loading(false);
   }
 
   @override
@@ -49,6 +54,8 @@ class UserListController extends GetxController
 
   @override
   Future<void> onEndScroll() async {
-    _page.value++;
+    if (!isLoading) {
+      _page.value++;
+    }
   }
 }
