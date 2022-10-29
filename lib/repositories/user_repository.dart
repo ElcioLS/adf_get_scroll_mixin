@@ -9,9 +9,13 @@ class UserRepository {
 
   UserRepository({required Dio dio}) : _dio = dio;
 
-  Future<List<UserModel>> getUsers() async {
+  Future<List<UserModel>> getUsers(int page, int limit) async {
     try {
-      final result = await _dio.get('/users');
+      print('Buscando página $page');
+      final result = await _dio.get('/users', queryParameters: {
+        'page': page,
+        'limit': limit,
+      });
 
       return result.data
           .map<UserModel>((user) => UserModel.fromMap(user))
